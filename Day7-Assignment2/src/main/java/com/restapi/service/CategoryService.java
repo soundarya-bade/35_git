@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restapi.entities.Category;
+import com.restapi.exception.ResourceNotFoundException;
 import com.restapi.repository.CategoryRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +21,14 @@ public class CategoryService {
 	CategoryRepository categoryRepository;
 
 	public void createCategory(Category category) {
-		log.info("Category Service:: createCategory {} {}",category.getId());
+		log.info("Category Service:: createCategory {} {}",category.getId(),category.getCategoryName());
 		categoryRepository.save(category);
 		log.info("Category saved successfully");
 
 	}
 
-	public List<Category> findAllCategorys() {
-		log.info("Category Service:: findAllCategorys");
+	public List<Category> findAllCategory() {
+		log.info("Category Service:: findAllCategory");
 		List<Category> categoryList= categoryRepository.findAll();
 		List<Category> result=categoryList.stream().sorted(Comparator.comparing(Category::getCategoryName)).toList();
 		return result;
@@ -35,13 +36,13 @@ public class CategoryService {
 
 	public Category findCategoryById(Long categoryId) {
 		return categoryRepository.findById(categoryId)
-				.orElseThrow(() -> new RuntimeException("Category not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 	}
 
 	
 	public void updateCategory(Long categoryId,Category inputCategory) {
 		Category dbCategory=findCategoryById(categoryId);
-		log.info("Category Service:: updateCategory {} {}",dbCategory.getId());
+		log.info("Category Service:: updateCategory {}",dbCategory.getId());
 		dbCategory.setCategoryName(inputCategory.getCategoryName());
 		categoryRepository.save(dbCategory);
 		log.info("Category updated successfully");
@@ -55,7 +56,7 @@ public class CategoryService {
 			log.info("Category deleted successfully");
 		}
 		else {
-			throw new RuntimeException("Category not found");
+			throw new ResourceNotFoundException("Category not found");
 		}
 
 	}

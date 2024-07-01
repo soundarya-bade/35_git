@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restapi.entities.User;
+import com.restapi.exception.ResourceNotFoundException;
 import com.restapi.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class UserService {
 
 	public User findUserById(Long userId) {
 		return userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 	}
 
 	public void updatePassword(Long userId,User inputUser) {
@@ -65,7 +66,7 @@ public class UserService {
 			log.info("User deleted successfully");
 		}
 		else {
-			throw new RuntimeException("User not found");
+			throw new ResourceNotFoundException("User not found");
 		}
 
 	}
